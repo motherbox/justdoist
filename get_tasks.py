@@ -51,6 +51,8 @@ def get_history(api):
 
 def write_csv(fname="tasks.tsv"):
     items, history, api = get_raw_items()
+    for item in items:
+        item['is_recurring'] = is_recurring(item)
 
     for task in tqdm(history):
         payload = api.items.get(task['id'])
@@ -65,6 +67,7 @@ def write_csv(fname="tasks.tsv"):
 
     df = pd.DataFrame.from_records(items)
     df['is_deleted'] = df['is_deleted'].astype(bool)
+    df['in_history'] = df['in_history'].astype(bool)
     df.to_csv(fname, sep="\t", encoding='utf-8', index=False)
 
 if __name__ == '__main__':
